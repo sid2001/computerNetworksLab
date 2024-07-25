@@ -1,0 +1,12 @@
+---> Data types
+        VARCHAR(<SIZE>)
+        CHAR
+        NUMBER
+        
+---->DDL
+    CREATE ALTER DROP TRUNCATE RENAME
+
+    syntax-->  <FIELD> DATATYPE <BAH BLAH BLAH
+
+    ex:
+        CREATE 
