@@ -43,16 +43,31 @@ int ipv4Validator(ipv4_addr addr) {
 	return 1;
 }
 
-ipv4_addr toDotNotation(unsigned long long addr) {
-	ipv4_addr ip = (ipv4_addr)malloc(15);
-	for(int i = 0; i < 4; i++) {
-		int octet = (addr >> (i==0?0:i*10*sizeof(1)*8)) & 0xFF;
-		printf("octet = %d",octet);
-		sprintf(ip + strlen(ip), "%d", octet);
-		printf("i = %d %s\n",i,ip);
-		if(i < 3) {
-			strcat(ip, ".");
-		}
+unsigned int binaryToInt(ipv4_addr addr) {
+	unsigned int ans = 0;
+	while(*addr) {
+		ans = (ans << 1) + (*addr++ - '0');
 	}
+	return ans;
+}
+
+ipv4_addr toDotNotation(ipv4_addr addr) {
+	unsigned int addr_value = binaryToInt(addr);
+	ipv4_addr ip = (ipv4_addr)malloc(15);
+	unsigned int shift = 8;
+	ipv4_addr buffer = (ipv4_addr)malloc(15);
+	for(unsigned int i = 0; i < (unsigned int)4; i++) {
+		unsigned int octet = (addr_value >> (i*shift)) & 0xFF;
+	//	printf("octet = %d",octet);
+		sprintf(buffer,"%s", ip);
+		sprintf(ip, "%d", octet);
+		if(i > 0) {
+			strcat(ip,".");
+		}
+		sprintf(ip+strlen(ip),"%s",buffer);
+		//printf("i = %d %s\n",i,ip);
+		
+	}
+	//printf("ipp: %s",ip);
 	return ip;
 }

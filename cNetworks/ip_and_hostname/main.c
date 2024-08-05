@@ -37,18 +37,18 @@ int main() {
 			char* tok = strtok(ip,"--");
 			ip_addr = tok;
 			tok = strtok(NULL,"--");
-			printf("%s",tok);
-			if(!strcmp(tok,"1")){
-				ipv4_addr ii = toDotNotation(atoll(ip_addr));
-				printf("%s",ii);
+			//printf("%s",tok);
+			if(tok && !strcmp(tok,"1")){
+				ip_addr = toDotNotation((ipv4_addr)ip_addr);
 			}
-			ip_addr = ip;
-			
-			if(!ipv4Validator((ipv4_addr)ip_addr)) {
+			char* ip_addr_copy = (char*)malloc(15);
+			sprintf(ip_addr_copy,"%s",ip_addr);
+			if(!ipv4Validator((ipv4_addr)ip_addr_copy)) {
 				printf("Invalid IP address.");
 				return 1;
 			}
-			inet_aton(ip_addr, &addr);
+			printf("\nip: %s\n",ip_addr);
+			inet_aton((char *)ip_addr, &addr);
 			he = gethostbyaddr(&addr, sizeof(addr), AF_INET);
 			if (he == NULL) {
 				herror("gethostbyaddr");
