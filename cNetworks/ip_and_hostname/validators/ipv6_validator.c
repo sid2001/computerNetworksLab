@@ -1,7 +1,12 @@
-typdef char* ipv6_addr;
+typedef char* ipv6_addr;
+
+int isxdigit(int c) {
+	return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
+}
 
 int ipv6_validator(ipv6_addr addr) {
     int i, j, k;
+    printf("sd");
     int num = 0;
     int colons = 0;
     int len = strlen(addr);
@@ -14,6 +19,7 @@ int ipv6_validator(ipv6_addr addr) {
 	}
     }
     if (colons < 2) {
+	printf("dsd");
 	return 0;
     }
     char* token = strtok(addr, ":");

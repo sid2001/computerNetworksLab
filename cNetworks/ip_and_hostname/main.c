@@ -3,6 +3,7 @@
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
+#include "./validators/ipv6_validator.c"
 #include "./validators/ipv4_validator.c"
 
 struct hostent *gethostbyname(const char *name);
@@ -11,6 +12,7 @@ struct hostent *gethostbyaddr(const void *addr, socklen_t len, int type);
 struct hostent *he;
 struct in_addr **addr_list;
 struct in_addr addr;
+struct in6_addr addr6;
 
 int main() {
 	char* hostname;
@@ -19,7 +21,7 @@ int main() {
 	char ip[100];
 	char hh[100];
 
-	printf("1. Hostname to IP\n2. IP to Hostname\n");
+	printf("1. Hostname to IP\n2. IPv4 to Hostname\n3. IPv6 to Hostname\n");
 	scanf("%d", &opt);
 	char a;
 	switch(opt) {
@@ -53,6 +55,17 @@ int main() {
 			if (he == NULL) {
 				herror("gethostbyaddr");
 				return 1;
+			}
+			break;
+		case 3:
+			scanf("%c%s", &a, ip);
+			char* ip6_addr_copy = (char*)malloc(24);
+			sprintf(ip6_addr_copy, "%s", ip);
+			if(!ipv6_validator((ipv6_addr)ip6_addr_copy)) {
+				printf("Invalid IP address.");
+			} else {
+				inet_pton(AF_INET6, (char *)ip, &addr6);
+				he = gethostbyaddr(&addr6, sizeof(addr6), AF_INET6);
 			}
 			break;
 		default:
