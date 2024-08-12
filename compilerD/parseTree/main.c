@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "./parser/expressionParser.c"
 
 struct node {
 	char value;
 	struct node* lchild;
-	struct ndoe* rchild;
+	struct node* rchild;
 };
 
 struct node* createNode(char value) {
@@ -14,13 +15,18 @@ struct node* createNode(char value) {
 	return n;
 }
 
+
+
 int main() {
-	char* st;
-
-	scanf("%s",st);
-	struct node* n= createNode('s');
-	printf("%c",n->value);
-	
+	char* st = (char*)malloc(ES*sizeof(char));
+	scanf("%[^\n]",st);
+	struct expression* ex = NewExp(st);
+	int c = 0;
+	read(ex);
+	while(ex->ch != '\0') {
+		printf("%c",ex->ch);
+		read(ex);
+		c++;
+	}
 	return 0;
-
 }
