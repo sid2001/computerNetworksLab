@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "./parser/expressionParser.c"
+#include "./parser/expressionParser.cpp"
+#include <vector>
 
 struct node {
 	char value;
@@ -18,8 +19,8 @@ struct node* createNode(char value) {
 
 
 int main() {
-	char* st = (char*)malloc(ES*sizeof(char));
-	scanf("%[^\n]",st);
+	string st; 
+	cin >> st;
 	struct expression* ex = NewExp(st);
 	int c = 0;
 	read(ex);
