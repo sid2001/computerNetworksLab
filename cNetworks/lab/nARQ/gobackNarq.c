@@ -71,7 +71,7 @@ void* SwitchReceiverPoint(void* arg){
 	int seq;
 	int k = 1;
 	while(read(swt->r_fd_recv[0],&seq,sizeof(int))>0) {
-		if(rand() % 3 == 0){
+		if(rand() % 4 == 0){
 			fprintf(stdout,"\nDropped ack: %d\n",seq);
 			fflush(stdout);
 			k++;
@@ -124,6 +124,11 @@ void* RecvACK(void *sender) {
 	//last frame while the receiver will expect some other frame.
 	//a solution can be stop sending frames after some time when
 	//no ack arrives.
+	
+	//okay i was wrong a bit 
+	//the receiver will send the ack of the last correct frame received
+	//this will repeat for sometimes until the connection finally closed 
+	//due to too much delay
 	struct Sender *s = (struct Sender*)sender;
 	int ack;
 	int m_seq_n = pow(2,s->seq_bits);
@@ -190,9 +195,14 @@ void StartReceiver(struct Switch *swt, struct FrameBuffer* frame){
 	r.r_fd_recv = swt->r_fd_recv;
 	int m_seq_n = pow(2,r.seq_bits);
 	int seq = 0;
+	FILE *fp;
+	fp = fopen("output.txt","w");
+	
 	while(read(r.r_fd_send[0],&seq,sizeof(int))>0) {
 		if(r.se == seq) {
 			int ack = (seq+1) % m_seq_n;
+			fprintf(fp,"%d",seq);
+			fflush(fp);
 			printf("\nReceiver::Recvd frame: %d\nSending ACK for frame %d.\n",seq,seq);
 			if(write(r.r_fd_recv[1],&ack,sizeof(int))<1){
 				printf("\nReceiver::Error in sending ACK.\n");
@@ -200,14 +210,19 @@ void StartReceiver(struct Switch *swt, struct FrameBuffer* frame){
 				exit(1);
 			}
 			r.se = ack;
-		}else if(seq > r.se) {
+		}else {
 			printf("\nReceiver::Frame recvd %d need %d. Out of order.\n",seq,r.se);
 			fflush(stdout);
-		}else{
-			printf("\nReceiver::Repeated frames recvd dropping frames.\n");
+			if(write(r.r_fd_recv[1],&(r.se),sizeof(int))<1){
+				printf("\nReceiver::Error in sending ACK.\n");
+				fflush(stdout);
+				exit(1);
+			}
+			printf("\nReceiver::Resent last correct frame ACK %d\n",r.se);
 			fflush(stdout);
 		}
 	}
+	fclose(fp);
 	close(r.r_fd_recv[1]);
 	exit(0);
 } 
